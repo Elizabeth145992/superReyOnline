@@ -1,5 +1,7 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, UsePipes, ValidationPipe } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { RegisterDto } from './dto/register.dto';
+import { LoginDto } from './dto/login.dto';
 
 
 @Controller('auth')
@@ -7,12 +9,13 @@ export class AuthController {
     constructor(private authService: AuthService) {}
 
     @Post('register')
-    async register(@Body() userData: any) {
+    @UsePipes(new ValidationPipe())
+    async register(@Body() userData: RegisterDto) {
         return this.authService.register(userData);
     }
 
     @Post('login')
-    async login(@Body() dataLogin: any) {
+    async login(@Body() dataLogin: LoginDto) {
         return this.authService.login(dataLogin.email, dataLogin.password);
     }
 }

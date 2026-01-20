@@ -5,6 +5,7 @@ import { UsersModule } from '../users/users.module';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { RolesModule } from '../roles/roles.module';
+import { RegisterDto } from './dto/register.dto';
 
 @Module({
   providers: [AuthService],
