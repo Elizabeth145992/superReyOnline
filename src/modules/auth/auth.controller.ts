@@ -11,7 +11,7 @@ import { RegisterDto } from "./dto/register.dto";
 import { LoginDto } from "./dto/login.dto";
 import { UserResponseDto } from "../users/dto/userResponse.dto";
 import { plainToInstance } from "class-transformer";
-import { JwtAuthGuard } from "./jwt-auth.guard";
+import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 import { UseGuards } from "@nestjs/common";
 
 @Controller("auth")
