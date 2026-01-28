@@ -16,10 +16,19 @@ export class UsersService {
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    return this.usersRepository.findOneBy({ email });
+    return this.usersRepository.findOne({
+      where: {
+        email,
+      },
+      relations: ['role'],
+    });
   }
 
   async findAll(): Promise<User[]> {
     return this.usersRepository.find();
+  }
+
+  async findById(id: number): Promise<User | null> {
+    return this.usersRepository.findOneBy({ id });
   }
 }
