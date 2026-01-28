@@ -1,8 +1,7 @@
-import { Controller, Post, Get, Body, Req } from '@nestjs/common';
+import { Controller, Post, Get, Body, UseGuards } from '@nestjs/common';
 import { AddressesService } from './addresses.service';
 import { CreateAddressDto } from './dto/createAddress.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { UseGuards } from '@nestjs/common';
 import { GetUser } from 'src/common/decorators/get-user.decorator';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';

@@ -9,10 +9,7 @@ import { JwtStrategy } from './jwt.estrategy';
 import { PassportModule } from '@nestjs/passport';
 
 @Module({
-  providers: [
-    AuthService,
-    JwtStrategy
-  ],
+  providers: [AuthService, JwtStrategy],
   controllers: [AuthController],
   imports: [
     UsersModule,
@@ -23,10 +20,10 @@ import { PassportModule } from '@nestjs/passport';
       useFactory: (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
         signOptions: {
-            expiresIn: '1d',
+          expiresIn: '1d',
         },
       }),
-    })
-  ]
+    }),
+  ],
 })
 export class AuthModule {}

@@ -6,10 +6,7 @@ import { AddressesController } from './addresses.controller';
 import { UsersModule } from '../users/users.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Address]),
-    UsersModule
-  ],
+  imports: [TypeOrmModule.forFeature([Address]), UsersModule],
   providers: [AddressesService],
   exports: [AddressesService],
   controllers: [AddressesController],
