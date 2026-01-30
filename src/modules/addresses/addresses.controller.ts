@@ -8,20 +8,21 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 
 @Controller('addresses')
 export class AddressesController {
-    constructor(
-        private addressesService: AddressesService,
-    ) {}
+  constructor(private addressesService: AddressesService) {}
 
-    @Post()
-    @Roles('client')
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    async createAddress(@GetUser('id') userId: number, @Body() addressData: CreateAddressDto) {
-        return this.addressesService.createAddress(addressData, userId);
-    }
+  @Post()
+  @Roles('client')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async createAddress(
+    @GetUser('id') userId: number,
+    @Body() addressData: CreateAddressDto,
+  ) {
+    return this.addressesService.createAddress(addressData, userId);
+  }
 
-    @Get()
-    @UseGuards(JwtAuthGuard)
-    async getAddressByUser(@GetUser('id') userId: number){
-        return this.addressesService.getAddressByUser(userId);
-    }
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  async getAddressByUser(@GetUser('id') userId: number) {
+    return this.addressesService.getAddressByUser(userId);
+  }
 }
