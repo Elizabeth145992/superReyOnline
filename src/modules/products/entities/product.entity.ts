@@ -3,6 +3,7 @@ import {
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
+  UpdateDateColumn,
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
@@ -19,7 +20,11 @@ export class Product {
   @Column('text')
   description: string;
 
-  @Column('decimal')
+  @Column({
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+  })
   price: number;
 
   @Column({ nullable: true, default: null })
@@ -34,7 +39,7 @@ export class Product {
   @CreateDateColumn()
   createdAt: Date;
 
-  @CreateDateColumn()
+  @UpdateDateColumn()
   lastUpdated: Date;
 
   @Column()

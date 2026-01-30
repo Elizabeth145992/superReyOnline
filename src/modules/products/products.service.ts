@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
@@ -22,14 +22,14 @@ export class ProductsService {
     const user = await this.usersService.findById(userId);
 
     if (!user) {
-      throw new UnauthorizedException('User not found');
+      throw new NotFoundException('User not found');
     }
     const category = await this.categoryProductsService.getCategoryById(
       productData.categoryId,
     );
 
     if (!category) {
-      throw new UnauthorizedException('Category not found');
+      throw new NotFoundException('Category not found');
     }
 
     const product = this.productsRepository.create(productData);
