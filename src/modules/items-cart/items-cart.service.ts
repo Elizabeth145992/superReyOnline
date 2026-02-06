@@ -1,0 +1,34 @@
+import { Injectable } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ItemCart } from './entities/item-cart.entity';
+
+@Injectable()
+export class ItemsCartService {
+  constructor(
+    @InjectRepository(ItemCart)
+    private readonly itemsCartRepository: Repository<ItemCart>,
+  ) {}
+
+  async createItemCart(itemCartData: Partial<ItemCart>): Promise<ItemCart> {
+    const itemCart = this.itemsCartRepository.create(itemCartData);
+    return this.itemsCartRepository.save(itemCart);
+  }
+
+  async updateItemCart(
+    quantityBox: number | null,
+    quantityUnit: number | null,
+    itemId: number,
+  ): Promise<ItemCart | null> {
+    const quantities = {};
+    if (quantityBox !== null) {
+      quantities['quantityBox'] = quantityBox;
+    }
+    if (quantityUnit !== null) {
+      quantities['quantityUnit'] = quantityUnit;
+    }
+    return this.itemsCartRepository
+      .update(itemId, quantities)
+      .then(() => this.itemsCartRepository.findOneBy({ id: itemId }));
+  }
+}
