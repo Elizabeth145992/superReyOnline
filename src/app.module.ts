@@ -1,12 +1,15 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 import { RolesModule } from './modules/roles/roles.module';
 import { AddressesModule } from './modules/addresses/addresses.module';
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { ProductsModule } from './modules/products/products.module';
 import { CategoryProductsModule } from './modules/category-products/category-products.module';
+import { CartsModule } from './modules/carts/carts.module';
+import { ItemsCartModule } from './modules/items-cart/items-cart.module';
 
 @Module({
   imports: [
@@ -39,6 +42,15 @@ import { CategoryProductsModule } from './modules/category-products/category-pro
     ProductsModule,
 
     CategoryProductsModule,
+
+    CartsModule,
+
+    ItemsCartModule,
   ],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(private dataSource: DataSource) {
+    const status = this.dataSource.isInitialized ? 'conectada' : 'fallida';
+    console.log(`La base de datos está ${status}`);
+  }
+}
