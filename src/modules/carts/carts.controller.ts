@@ -13,7 +13,7 @@ import {
 import { CartsService } from './carts.service';
 import { AddItemToCart } from './dto/addItemtoCart.dto';
 import { CartResponseDto } from './dto/cartResponse.dto';
-import { UpdateitemResponseDto } from './dto/updateitemResponse.dto.';
+import { UpdateItemResponseDto } from './dto/updateitemResponse.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { GetUser } from 'src/common/decorators/get-user.decorator';
 import { Roles } from 'src/common/decorators/roles.decorator';
@@ -57,12 +57,12 @@ export class CartsController {
     });
   }
 
-  @Patch('items/:productid')
+  @Patch('items/:productId')
   @Roles('client')
   @UseGuards(JwtAuthGuard, RolesGuard)
   async updateItemQuantity(
     @GetUser('id') userId: number,
-    @Param('productid') productId: number,
+    @Param('productId') productId: number,
     @Body()
     body: {
       quantityBox?: number | null;
@@ -76,17 +76,17 @@ export class CartsController {
       body?.quantityBox || null,
     );
 
-    return plainToInstance(UpdateitemResponseDto, item, {
+    return plainToInstance(UpdateItemResponseDto, item, {
       excludeExtraneousValues: true,
     });
   }
 
-  @Delete('items/:productid')
+  @Delete('items/:productId')
   @Roles('client')
   @UseGuards(JwtAuthGuard, RolesGuard)
   async removeItemFromCart(
     @GetUser('id') userId: number,
-    @Param('productid') productId: number,
+    @Param('productId') productId: number,
   ) {
     return this.cartsService.updateItemQuantity(userId, productId, 0, 0);
   }

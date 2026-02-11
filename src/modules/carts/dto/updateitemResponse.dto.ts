@@ -1,7 +1,7 @@
 import { Expose, Type } from 'class-transformer';
 import { ProductResponseDto } from './cartResponse.dto';
 
-export class UpdateitemResponseDto {
+export class UpdateItemResponseDto {
   @Expose()
   @Type(() => ProductResponseDto)
   product: ProductResponseDto;
