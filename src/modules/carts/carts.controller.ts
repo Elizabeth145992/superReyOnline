@@ -3,13 +3,17 @@ import {
   Post,
   Body,
   Get,
+  Patch,
+  Delete,
   UseGuards,
   UseInterceptors,
   ClassSerializerInterceptor,
+  Param,
 } from '@nestjs/common';
 import { CartsService } from './carts.service';
 import { AddItemToCart } from './dto/addItemtoCart.dto';
 import { CartResponseDto } from './dto/cartResponse.dto';
+import { UpdateItemResponseDto } from './dto/updateitemResponse.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { GetUser } from 'src/common/decorators/get-user.decorator';
 import { Roles } from 'src/common/decorators/roles.decorator';
@@ -51,5 +55,39 @@ export class CartsController {
     return plainToInstance(CartResponseDto, cart, {
       excludeExtraneousValues: true,
     });
+  }
+
+  @Patch('items/:productId')
+  @Roles('client')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async updateItemQuantity(
+    @GetUser('id') userId: number,
+    @Param('productId') productId: number,
+    @Body()
+    body: {
+      quantityBox?: number | null;
+      quantityUnit?: number | null;
+    },
+  ) {
+    const item = await this.cartsService.updateItemQuantity(
+      userId,
+      productId,
+      body?.quantityUnit || null,
+      body?.quantityBox || null,
+    );
+
+    return plainToInstance(UpdateItemResponseDto, item, {
+      excludeExtraneousValues: true,
+    });
+  }
+
+  @Delete('items/:productId')
+  @Roles('client')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async removeItemFromCart(
+    @GetUser('id') userId: number,
+    @Param('productId') productId: number,
+  ) {
+    return this.cartsService.updateItemQuantity(userId, productId, 0, 0);
   }
 }

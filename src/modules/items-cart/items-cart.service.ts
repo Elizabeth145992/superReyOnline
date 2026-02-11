@@ -31,4 +31,12 @@ export class ItemsCartService {
       .update(itemId, quantities)
       .then(() => this.itemsCartRepository.findOneBy({ id: itemId }));
   }
+
+  async removeItemCart(item: ItemCart): Promise<void> {
+    await this.itemsCartRepository.remove(item);
+  }
+
+  async saveItemCart(item: ItemCart): Promise<void> {
+    await this.itemsCartRepository.save(item);
+  }
 }

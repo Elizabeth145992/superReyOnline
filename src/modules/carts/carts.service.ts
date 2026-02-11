@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cart } from './entities/cart.entity';
+import { ItemCart } from '../items-cart/entities/item-cart.entity';
 import { UsersService } from '../users/users.service';
 import { ProductsService } from '../products/products.service';
 import { ItemsCartService } from '../items-cart/items-cart.service';
@@ -100,5 +101,36 @@ export class CartsService {
     });
 
     return cart;
+  }
+
+  async updateItemQuantity(
+    idUser: number,
+    productId: number,
+    quantityUnit: number | null,
+    quantityBox: number | null,
+  ): Promise<ItemCart | null | { message: string }> {
+    const cart = await this.getActiveCartByUserId(idUser);
+
+    if (!cart) {
+      throw new NotFoundException('updateItemQuantity: cart no found');
+    }
+
+    const item = cart.itemsCart.find((item) => item.product.id == productId);
+    if (!item) {
+      throw new NotFoundException('updateItemQuantity: item no found');
+    }
+
+    if (quantityBox === 0 && quantityUnit === 0) {
+      await this.itemsCartService.removeItemCart(item);
+      return {
+        message: 'Item remove from cart',
+      };
+    }
+
+    if (quantityBox !== null) item.quantityBox = quantityBox;
+    if (quantityUnit !== null) item.quantityUnit = quantityUnit;
+
+    await this.itemsCartService.saveItemCart(item);
+    return item;
   }
 }
