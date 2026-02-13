@@ -133,4 +133,8 @@ export class CartsService {
     await this.itemsCartService.saveItemCart(item);
     return item;
   }
+
+  async saveCart(cart: Partial<Cart>) {
+    await this.cartRepository.save(cart);
+  }
 }

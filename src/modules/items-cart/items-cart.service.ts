@@ -39,4 +39,10 @@ export class ItemsCartService {
   async saveItemCart(item: ItemCart): Promise<void> {
     await this.itemsCartRepository.save(item);
   }
+
+  async removeItemsCart(idCart: number) {
+    await this.itemsCartRepository.delete({
+      cart: { id: idCart },
+    });
+  }
 }
