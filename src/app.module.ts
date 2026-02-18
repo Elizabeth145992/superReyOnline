@@ -10,6 +10,8 @@ import { ProductsModule } from './modules/products/products.module';
 import { CategoryProductsModule } from './modules/category-products/category-products.module';
 import { CartsModule } from './modules/carts/carts.module';
 import { ItemsCartModule } from './modules/items-cart/items-cart.module';
+import { OrderItemsModule } from './modules/order-items/order-items.module';
+import { OrdersModule } from './modules/orders/orders.module';
 
 @Module({
   imports: [
@@ -46,6 +48,10 @@ import { ItemsCartModule } from './modules/items-cart/items-cart.module';
     CartsModule,
 
     ItemsCartModule,
+
+    OrdersModule,
+
+    OrderItemsModule,
   ],
 })
 export class AppModule {

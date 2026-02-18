@@ -25,7 +25,14 @@ export class Product {
     precision: 10,
     scale: 2,
   })
-  price: number;
+  priceUnit: number;
+
+  @Column({
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+  })
+  priceBox: number;
 
   @Column({ nullable: true, default: null })
   stockBox: number;

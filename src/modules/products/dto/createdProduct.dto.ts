@@ -22,7 +22,11 @@ export class CreatedProductDto {
 
   @IsNotEmpty()
   @IsNumber()
-  price: number;
+  priceUnit: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  priceBox: number;
 
   @IsNumber()
   @IsOptional()
