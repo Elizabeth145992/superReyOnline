@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cart } from './entities/cart.entity';
 import { ItemCart } from '../items-cart/entities/item-cart.entity';
@@ -85,14 +85,21 @@ export class CartsService {
     return this.cartRepository.save(cart);
   }
 
-  async getActiveCartByUserId(userId: number): Promise<Cart | null> {
+  async getActiveCartByUserId(
+    userId: number,
+    managerDB?: EntityManager,
+  ): Promise<Cart | null> {
+    const manager = managerDB
+      ? managerDB.getRepository(Cart)
+      : this.cartRepository;
+
     const user = await this.userRepository.findById(userId);
     if (!user)
       throw new NotFoundException(
         'Cart service (getActiveCartByUserId): User not found',
       );
 
-    const cart = await this.cartRepository.findOne({
+    const cart = await manager.findOne({
       where: {
         user: { id: userId },
         active: true,
@@ -134,7 +141,10 @@ export class CartsService {
     return item;
   }
 
-  async saveCart(cart: Partial<Cart>) {
-    await this.cartRepository.save(cart);
+  async saveCart(cart: Partial<Cart>, managerBD?: EntityManager) {
+    const manager = managerBD
+      ? managerBD.getRepository(Cart)
+      : this.cartRepository;
+    await manager.save(cart);
   }
 }

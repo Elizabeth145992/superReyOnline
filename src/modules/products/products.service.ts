@@ -54,6 +54,7 @@ export class ProductsService {
         'priceBox',
         'stockBox',
         'stockUnit',
+        'productByBox',
         'imageUrl',
         'categoryProduct',
       ],
