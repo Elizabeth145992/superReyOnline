@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ItemCart } from './entities/item-cart.entity';
 
@@ -40,8 +40,11 @@ export class ItemsCartService {
     await this.itemsCartRepository.save(item);
   }
 
-  async removeItemsCart(idCart: number) {
-    await this.itemsCartRepository.delete({
+  async removeItemsCart(idCart: number, managerDB?: EntityManager) {
+    const manager = managerDB
+      ? managerDB.getRepository(ItemCart)
+      : this.itemsCartRepository;
+    await manager.delete({
       cart: { id: idCart },
     });
   }

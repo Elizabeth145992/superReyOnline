@@ -23,7 +23,7 @@ export class User {
   @Column()
   lastName: string;
 
-  @Column({ unique: true })
+  @Column({ unique: true, length: 191 })
   email: string;
 
   @Column()

@@ -14,7 +14,7 @@ export class Product {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true })
+  @Column({ unique: true, length: 191 })
   name: string;
 
   @Column('text')
@@ -34,11 +34,14 @@ export class Product {
   })
   priceBox: number;
 
-  @Column({ nullable: true, default: null })
+  @Column({ nullable: true, default: 0 })
   stockBox: number;
 
-  @Column({ nullable: true, default: null })
+  @Column({ nullable: true, default: 0 })
   stockUnit: number;
+
+  @Column({ nullable: true, default: 0 })
+  productByBox: number;
 
   @Column({ default: true })
   active: boolean;

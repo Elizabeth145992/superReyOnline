@@ -36,6 +36,10 @@ export class CreatedProductDto {
   @IsOptional()
   stockUnit: number;
 
+  @IsNumber()
+  @IsOptional()
+  productByBox: number;
+
   @IsNotEmpty()
   @IsString()
   imageUrl: string;

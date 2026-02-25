@@ -69,11 +69,14 @@ export class CartsController {
       quantityUnit?: number | null;
     },
   ) {
+    const quantityUnit = body.quantityUnit != null ? body.quantityUnit : null;
+    const quantityBox = body.quantityBox != null ? body.quantityBox : null;
+
     const item = await this.cartsService.updateItemQuantity(
       userId,
       productId,
-      body?.quantityUnit || null,
-      body?.quantityBox || null,
+      quantityUnit,
+      quantityBox,
     );
 
     return plainToInstance(UpdateItemResponseDto, item, {
