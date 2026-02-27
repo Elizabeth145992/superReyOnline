@@ -102,4 +102,48 @@ export class OrdersService {
       return orderCreated;
     });
   }
+
+  async getMyOrderByStatus(userId: number, status: number | null) {
+    const queryOrders = this.dataSource
+      .getRepository(Order)
+      .createQueryBuilder('order')
+      .leftJoinAndSelect('order.items', 'items')
+      .leftJoinAndSelect('items.product', 'product')
+      .where('order.userId = :userId', { userId })
+      .orderBy('order.createdAt', 'DESC');
+
+    if (status !== null) {
+      queryOrders.andWhere('order.status = :status', { status });
+    }
+
+    const orders = await queryOrders.getMany();
+
+    return orders;
+  }
+
+  async getOrderById(userId: number, orderId: number) {
+    const queryOrder = this.dataSource
+      .getRepository(Order)
+      .createQueryBuilder('order')
+      .leftJoinAndSelect('order.items', 'items')
+      .leftJoinAndSelect('items.product', 'product')
+      .where('order.userId = :userId AND order.id = :orderId', {
+        userId,
+        orderId,
+      });
+
+    return await queryOrder.getOne();
+  }
+
+  async getOrdersByStatus(status: number) {
+    const queryOrders = this.dataSource
+      .getRepository(Order)
+      .createQueryBuilder('order')
+      .leftJoinAndSelect('order.items', 'items')
+      .leftJoinAndSelect('items.product', 'product')
+      .where('order.status = :status', { status })
+      .orderBy('order.createdAt', 'DESC');
+
+    return await queryOrders.getMany();
+  }
 }
