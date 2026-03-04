@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -101,5 +102,92 @@ export class OrdersService {
 
       return orderCreated;
     });
+  }
+
+  async getMyOrderByStatus(userId: number, status: number | null) {
+    const queryOrders = this.dataSource
+      .getRepository(Order)
+      .createQueryBuilder('order')
+      .leftJoinAndSelect('order.items', 'items')
+      .leftJoinAndSelect('items.product', 'product')
+      .where('order.userId = :userId', { userId })
+      .orderBy('order.createdAt', 'DESC');
+
+    if (status !== null) {
+      queryOrders.andWhere('order.status = :status', { status });
+    }
+
+    const orders = await queryOrders.getMany();
+
+    return orders;
+  }
+
+  async getOrderById(user: Record<string, unknown>, orderId: number) {
+    const queryOrder = this.dataSource
+      .getRepository(Order)
+      .createQueryBuilder('order')
+      .leftJoinAndSelect('order.items', 'items')
+      .leftJoinAndSelect('items.product', 'product')
+      .leftJoin('order.user', 'user')
+      .addSelect('user.id')
+      .where('order.userId = :userId AND order.id = :orderId', {
+        userId: user.id,
+        orderId,
+      });
+
+    const orderResult = await queryOrder.getOne();
+
+    if (
+      user.role !== 'admin' &&
+      user.role !== 'root' &&
+      orderResult?.user.id !== user.id
+    ) {
+      throw new ForbiddenException('Access denied');
+    }
+
+    return orderResult;
+  }
+
+  async getOrdersByStatus(status: number) {
+    const queryOrders = this.dataSource
+      .getRepository(Order)
+      .createQueryBuilder('order')
+      .leftJoinAndSelect('order.items', 'items')
+      .leftJoinAndSelect('items.product', 'product')
+      .where('order.status = :status', { status })
+      .orderBy('order.createdAt', 'DESC');
+
+    return await queryOrders.getMany();
+  }
+
+  async updateStatusOrder(idOrder: number, status: number) {
+    const queryOrder = this.dataSource
+      .getRepository(Order)
+      .createQueryBuilder('order')
+      .where('order.id = :idOrder', { idOrder });
+
+    const orderResult = await queryOrder.getOne();
+
+    if (!orderResult) {
+      throw new NotFoundException('updateStatusOrder: Order not found');
+    }
+
+    const orderUpdated = await this.dataSource
+      .getRepository(Order)
+      .createQueryBuilder('order')
+      .update(Order)
+      .set({
+        status: status,
+      })
+      .where('order.id = :idOrder', { idOrder })
+      .execute();
+
+    let updatesSuccess = false;
+
+    if (orderUpdated && (orderUpdated.affected ?? 0) > 0) {
+      updatesSuccess = true;
+    }
+
+    return { success: updatesSuccess, idOrderUpdated: idOrder };
   }
 }

@@ -21,8 +21,8 @@ export class Order {
   })
   total: number;
 
-  @Column({ default: 'pending' })
-  status: string;
+  @Column({ default: 1 })
+  status: number;
 
   @CreateDateColumn()
   createdAt: Date;
