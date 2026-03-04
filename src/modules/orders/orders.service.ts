@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -121,18 +122,30 @@ export class OrdersService {
     return orders;
   }
 
-  async getOrderById(userId: number, orderId: number) {
+  async getOrderById(user: Record<string, unknown>, orderId: number) {
     const queryOrder = this.dataSource
       .getRepository(Order)
       .createQueryBuilder('order')
       .leftJoinAndSelect('order.items', 'items')
       .leftJoinAndSelect('items.product', 'product')
+      .leftJoin('order.user', 'user')
+      .addSelect('user.id')
       .where('order.userId = :userId AND order.id = :orderId', {
-        userId,
+        userId: user.id,
         orderId,
       });
 
-    return await queryOrder.getOne();
+    const orderResult = await queryOrder.getOne();
+
+    if (
+      user.role !== 'admin' &&
+      user.role !== 'root' &&
+      orderResult?.user.id !== user.id
+    ) {
+      throw new ForbiddenException('Access denied');
+    }
+
+    return orderResult;
   }
 
   async getOrdersByStatus(status: number) {
@@ -145,5 +158,36 @@ export class OrdersService {
       .orderBy('order.createdAt', 'DESC');
 
     return await queryOrders.getMany();
+  }
+
+  async updateStatusOrder(idOrder: number, status: number) {
+    const queryOrder = this.dataSource
+      .getRepository(Order)
+      .createQueryBuilder('order')
+      .where('order.id = :idOrder', { idOrder });
+
+    const orderResult = await queryOrder.getOne();
+
+    if (!orderResult) {
+      throw new NotFoundException('updateStatusOrder: Order not found');
+    }
+
+    const orderUpdated = await this.dataSource
+      .getRepository(Order)
+      .createQueryBuilder('order')
+      .update(Order)
+      .set({
+        status: status,
+      })
+      .where('order.id = :idOrder', { idOrder })
+      .execute();
+
+    let updatesSuccess = false;
+
+    if (orderUpdated && (orderUpdated.affected ?? 0) > 0) {
+      updatesSuccess = true;
+    }
+
+    return { success: updatesSuccess, idOrderUpdated: idOrder };
   }
 }

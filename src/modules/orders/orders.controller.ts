@@ -1,4 +1,12 @@
-import { Controller, Post, Get, UseGuards, Query, Param } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Patch,
+  UseGuards,
+  Query,
+  Param,
+} from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { GetUser } from 'src/common/decorators/get-user.decorator';
@@ -45,10 +53,10 @@ export class OrdersController {
   @Roles('client', 'root', 'admin')
   @UseGuards(JwtAuthGuard, RolesGuard)
   async getOrderById(
-    @GetUser('id') userId: number,
+    @GetUser() user: Record<string, unknown>,
     @Param('orderId') orderId: number,
   ): Promise<GetOrderResponseDto> {
-    const order = await this.ordersService.getOrderById(userId, orderId);
+    const order = await this.ordersService.getOrderById(user, orderId);
 
     return plainToInstance(GetOrderResponseDto, order, {
       excludeExtraneousValues: true,
@@ -66,5 +74,15 @@ export class OrdersController {
     return plainToInstance(GetOrderResponseDto, orders, {
       excludeExtraneousValues: true,
     });
+  }
+
+  @Patch('updateOrder/:id/:status')
+  @Roles('root', 'admin')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async updateStatusOrder(
+    @Param('id') idOrder: number,
+    @Param('status') status: number,
+  ) {
+    return await this.ordersService.updateStatusOrder(idOrder, status);
   }
 }
